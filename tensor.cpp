@@ -81,18 +81,31 @@ Tensor<T> operator+(const Tensor<T>& a,const Tensor<T>& b){
     return ret;
 };
 
+template <typename T>
+Tensor<T> operator*(const float& a,const Tensor<T>& b){
+    Tensor<T> ret(b.shape);
+    for(int i = 0;i<b.arr.size();i++){
+        ret.arr[i] = a * b.arr[i];
+    }
+    return ret;
+};
+
+template<typename T>
+class Node{
+    std::vector<Tensor<T>> operands;
+
+
+};
 
 
 int main(){
     try{
-    Tensor<float> t(std::vector<int>({2,2}),std::vector<std::vector<float>>({{10,2},{3,4}}));
-    Tensor<float> b(std::vector<int>({2,2}),std::vector<std::vector<float>>({{10,2},{3,4}}));
-    Tensor<float> q = t + b;
-    printvec(q.arr);
+        Tensor<float> t(std::vector<int>({2,2}),std::vector<std::vector<float>>({{10,2},{3,4}}));
+        Tensor<float> b(std::vector<int>({2,2}),std::vector<std::vector<float>>({{11,2},{3,4}}));
+        Tensor<float> q = t + b;
+        printvec((2*q).arr);
     }
     catch(int e){
         std::cout<<e<<std::endl;
     }
-
-   
 }
