@@ -1,0 +1,87 @@
+#include "tensor.h"
+#include "node.h"
+
+Tensor operator+(const Tensor& a, const Tensor& b) {
+    if(a.shape != b.shape) {
+        throw 200;
+    }
+    Tensor ret(a.shape, 0, 0);
+    for(int i = 0; i < a.arr.size(); i++) {
+        ret.arr[i] = a.arr[i] + b.arr[i];
+    }
+    return ret;
+}
+
+tensor operator+(const tensor a, const tensor b) {
+    bool get_backward = false;
+    if(a.require_grad() || b.require_grad()) get_backward = true;
+    
+    if(a.shape() != b.shape()) {
+        throw 201;
+    }
+    
+    tensor ret = tensor(a.shape(), 0.0, 1);
+    
+    for(int i = 0; i < a.arr().size(); i++) {
+        ret.arr()[i] = a.arr()[i] + b.arr()[i];
+    }
+    
+    if(get_backward) {
+        auto back_fn = new AddBackward(a, b);
+        *(ret.grad_fn()) = back_fn;
+    }
+    
+    return ret;
+}
+
+Tensor operator*(const float& a, const Tensor& b) {
+    Tensor ret(b.shape, 0);
+    for(int i = 0; i < b.arr.size(); i++) {
+        ret.arr[i] = a * b.arr[i];
+    }
+    return ret;
+}
+
+tensor operator*(const float& a, const tensor& b) {
+    tensor ret = tensor(b.shape(), 0.0);
+    
+    for(int i = 0; i < b.arr().size(); i++) {
+        ret.arr()[i] = a * b.arr()[i];
+    }
+    return ret;
+}
+
+Tensor matmul(const Tensor& a, const Tensor& b) {
+    int m = a.shape[0];
+    int n = a.shape[1];
+    int o = b.shape[1];
+    Tensor ret(std::vector<int>({m, o}), 0);
+    for(int i = 0; i < m; i++) {
+        for(int j = 0; j < o; j++) {
+            float sum = 0;
+            for(int k = 0; k < n; k++) {
+                sum += a.arr[n*i + k] * b.arr[k*o + j];
+            }
+            ret.arr[i * o + j] = sum;
+        }
+    }
+    return ret;
+}
+
+tensor matmul(const tensor& a, const tensor& b) {
+    int m = a.shape()[0];
+    int n = a.shape()[1];
+    int o = b.shape()[1];
+    
+    tensor ret = tensor(std::vector<int>({m, o}), 0.0);
+    for(int i = 0; i < m; i++) {
+        for(int j = 0; j < o; j++) {
+            float sum = 0;
+            for(int k = 0; k < n; k++) {
+                sum += a.arr()[n*i + k] * b.arr()[k*o + j];
+            }
+            ret.arr()[i * o + j] = sum;
+        }
+    }
+    return ret;
+}
