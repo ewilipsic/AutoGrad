@@ -10,7 +10,7 @@ AddBackward::AddBackward(tensor a, tensor b) {
 void AddBackward::_backward(Tensor external_grad) {
     for(auto& x : operands) {
         if(x.require_grad()) {
-            x.out_degree()--;
+            // MEMORY LEAK
             *(x.grad()) = *(x.grad()) + external_grad;
         }
     }

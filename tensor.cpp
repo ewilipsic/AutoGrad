@@ -16,8 +16,6 @@ Tensor::Tensor(std::vector<int> _shape, const std::vector<T1>& _vec, int _requir
     arr.reserve(size);
     copy_elements(_vec, arr);
     for(int x : _shape) shape.push_back(x);
-    
-    std::cout<<"constructor A"<<" "<<_require_grad<<std::endl;
 
     require_grad = _require_grad;
     if(_require_grad) {
@@ -34,7 +32,6 @@ Tensor::Tensor(std::vector<int> _shape, float fill, int _require_grad) {
     }
     
     std::cout << "Tensor Created\n";
-    std::cout<<"constructor B"<<" "<<_require_grad<<std::endl;
 
     arr = std::vector<float>(size, fill);
     
@@ -48,6 +45,17 @@ Tensor::Tensor(std::vector<int> _shape, float fill, int _require_grad) {
 Tensor::~Tensor() {
     std::cout << "Tensor Destroyed\n";
     if(grad) delete grad;
+    if(grad_fn) delete grad_fn;
+}
+
+void Tensor::_backward(){
+    if(grad_fn) grad_fn->_backward(*grad);
+}
+
+void Tensor::fill(float f){
+    for(float& i : arr){
+        i = f;
+    }
 }
 
 // TensorProxy implementation
@@ -65,7 +73,8 @@ int& TensorProxy::require_grad() const { return ptr->require_grad; }
 Tensor* TensorProxy::grad() { return ptr->grad; }
 Node** TensorProxy::grad_fn() { return &(ptr->grad_fn); }
 int& TensorProxy::out_degree() const { return ptr->out_degree; }
-void TensorProxy::_backward() const { }
+void TensorProxy::_backward() const {ptr->_backward();}
+void TensorProxy::fill(float f) { ptr->fill(f); }
 
 // Explicit template instantiation
 template Tensor::Tensor(std::vector<int>, const std::vector<float>&, int);

@@ -1,19 +1,25 @@
-#include<bits/stdc++.h>
-
+#include<iostream>
 using namespace std;
 
-class E{
+class Enitity{
     public:
-    int n;
-    E* one;
-    E(int _n){n = _n;}
+    virtual void func() = 0;
+};
 
-    ~E(){
-        cout<<"Destroyed";
+class Person : public Enitity{
+    public:
+    void func(){
+        cout<<10<<endl;
+    }
+};
+class Person2 : public Enitity{
+    public:
+    void func(){
+        cout<<12<<endl;
     }
 };
 int main(){
-    E e(1);
+    Enitity* t = new Person2;
 
-    
+    t->func();
 }

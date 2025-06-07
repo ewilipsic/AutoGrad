@@ -85,3 +85,8 @@ tensor matmul(const tensor& a, const tensor& b) {
     }
     return ret;
 }
+
+
+bool operator<(const tensor& a, const tensor& b){
+    return a.ptr.get() < b.ptr.get();
+}
