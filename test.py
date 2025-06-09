@@ -1,30 +1,27 @@
 import torch
 
-# Create tensors with requires_grad=True
-a = torch.tensor([[3.0], [2.0], [1.0]], requires_grad=True)
-b = torch.tensor([[3.0], [2.0], [1.0]], requires_grad=True)
-c = torch.tensor([[2.0], [1.0], [1.0]], requires_grad=True)
-d = torch.tensor([[1.0], [2.0], [1.0]], requires_grad=True)
+# Create tensors with the same values and enable gradient computation
+a = torch.tensor([[-1.0, -1.0, 2.0], 
+                  [2.0, -3.0, 4.0], 
+                  [2.0, -3.0, 4.0]], requires_grad=True)
 
-# Perform operations
-e = b + c
-f = a + c
-g = e + f
+b = torch.tensor([[-1.0, 1.0, 2.0], 
+                  [2.0, 3.0, 4.0], 
+                  [9.0, 1.0, 4.0]], requires_grad=True)
 
-# Retain gradients for intermediate tensors
-e.retain_grad()
-f.retain_grad()
-g.retain_grad()
+# Forward pass - retain gradients for intermediate tensors
+c = torch.relu(a)
+c.retain_grad()
 
-print("AAA")
+d = torch.matmul(b, c)
+d.retain_grad()
+
 # Backward pass
-g.backward(torch.ones_like(g))
+loss = d.sum()
+loss.backward()
 
-# Print all gradients
-print("a.grad:", a.grad)
-print("b.grad:", b.grad)
-print("c.grad:", c.grad)
-print("d.grad:", d.grad)
-print("e.grad:", e.grad)
-print("f.grad:", f.grad)
-print("g.grad:", g.grad)
+# Print only gradients (flattened)
+print(a.grad.flatten().tolist())
+print(b.grad.flatten().tolist())
+print(c.grad.flatten().tolist())
+print(d.grad.flatten().tolist())

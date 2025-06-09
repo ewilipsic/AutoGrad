@@ -20,7 +20,7 @@ tensor operator+(const tensor a, const tensor b) {
         throw 201;
     }
     
-    tensor ret = tensor(a.shape(), 0.0, 1);
+    tensor ret = tensor(a.shape(), 0.0, get_backward);
     
     for(int i = 0; i < a.arr().size(); i++) {
         ret.arr()[i] = a.arr()[i] + b.arr()[i];
@@ -35,7 +35,7 @@ tensor operator+(const tensor a, const tensor b) {
 }
 
 Tensor operator*(const float& a, const Tensor& b) {
-    Tensor ret(b.shape, 0);
+    Tensor ret(b.shape, 0, 0);
     for(int i = 0; i < b.arr.size(); i++) {
         ret.arr[i] = a * b.arr[i];
     }
@@ -43,10 +43,18 @@ Tensor operator*(const float& a, const Tensor& b) {
 }
 
 tensor operator*(const float& a, const tensor& b) {
-    tensor ret = tensor(b.shape(), 0.0);
+    bool get_backward = false;
+    if(b.require_grad()) get_backward = true;
+
+    tensor ret = tensor(b.shape(), 0.0, get_backward);
     
     for(int i = 0; i < b.arr().size(); i++) {
         ret.arr()[i] = a * b.arr()[i];
+    }
+
+    if(get_backward) {
+        auto back_fn = new ScalarMulBackward(a, b);
+        *(ret.grad_fn()) = back_fn;
     }
     return ret;
 }
@@ -69,11 +77,13 @@ Tensor matmul(const Tensor& a, const Tensor& b) {
 }
 
 tensor matmul(const tensor& a, const tensor& b) {
+    bool get_backward = false;
+    if(a.require_grad() || b.require_grad()) get_backward = true;
     int m = a.shape()[0];
     int n = a.shape()[1];
     int o = b.shape()[1];
     
-    tensor ret = tensor(std::vector<int>({m, o}), 0.0);
+    tensor ret = tensor(std::vector<int>({m, o}), 0.0, get_backward);
     for(int i = 0; i < m; i++) {
         for(int j = 0; j < o; j++) {
             float sum = 0;
@@ -83,10 +93,33 @@ tensor matmul(const tensor& a, const tensor& b) {
             ret.arr()[i * o + j] = sum;
         }
     }
+
+    if(get_backward) {
+        auto back_fn = new MatmulBackward(a, b);
+        *(ret.grad_fn()) = back_fn;
+    }
+
     return ret;
 }
 
+tensor Relu(const tensor& a){
+    bool get_backward = false;
+    if(a.require_grad()) get_backward = true;
+    
+    tensor ret = tensor(a.shape(), 0.0, get_backward);
+    
+    for(int i = 0; i < a.arr().size(); i++) {
+        ret.arr()[i] = ((a.arr()[i] > 0) ? a.arr()[i] : 0.0);
+    }
+    
+    if(get_backward) {
+        auto back_fn = new ReluBackward(a);
+        *(ret.grad_fn()) = back_fn;
+    }
+    
+    return ret;
 
+}
 bool operator<(const tensor& a, const tensor& b){
     return a.ptr.get() < b.ptr.get();
 }

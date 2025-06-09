@@ -11,12 +11,13 @@ Tensor::Tensor(std::vector<int> _shape, const std::vector<T1>& _vec, int _requir
     }
     
     if(size != get_element_count(_vec)) throw 100;
-    
     std::cout << "Tensor Created\n";
+
     arr.reserve(size);
     copy_elements(_vec, arr);
     for(int x : _shape) shape.push_back(x);
-
+    compute_strides();
+    
     require_grad = _require_grad;
     if(_require_grad) {
         grad = new Tensor(shape, 0.0, 0);
@@ -30,9 +31,9 @@ Tensor::Tensor(std::vector<int> _shape, float fill, int _require_grad) {
         size *= s;
         shape.push_back(s);
     }
-    
     std::cout << "Tensor Created\n";
-
+    
+    compute_strides();
     arr = std::vector<float>(size, fill);
     
     require_grad = _require_grad;
@@ -58,6 +59,24 @@ void Tensor::fill(float f){
     }
 }
 
+void Tensor::compute_strides() {
+    strides.resize(shape.size());
+    if (shape.empty()) return;
+    
+    strides[shape.size() - 1] = 1;
+    for (int i = shape.size() - 2; i >= 0; --i) {
+        strides[i] = strides[i + 1] * shape[i + 1];
+    }
+}
+    
+size_t Tensor::compute_flat_index(std::initializer_list<int> indices) const {
+    size_t flat_index = 0;
+    auto it = indices.begin();
+    for (size_t i = 0; i < indices.size() && i < strides.size(); ++i, ++it) {
+        flat_index += (*it) * strides[i];
+    }
+    return flat_index;
+}
 // TensorProxy implementation
 TensorProxy::TensorProxy() {}
 
