@@ -10,11 +10,35 @@ AddBackward::AddBackward(tensor a, tensor b) {
 void AddBackward::_backward(Tensor external_grad) {
     for(auto& x : operands) {
         if(x.require_grad()) {
-            // MEMORY LEAK
             for(int i = 0;i<x.arr().size();i++){
                 (*(x.grad()))[i] = (*(x.grad()))[i] + external_grad[i];
             }
-          
+        }
+    }
+}
+
+SubtractBackward::SubtractBackward() {}
+
+SubtractBackward::SubtractBackward(tensor a, tensor b) {
+    this->operands.push_back(a);
+    this->operands.push_back(b);
+}
+
+void SubtractBackward::_backward(Tensor external_grad) {
+    if(operands[0].require_grad()) {
+        auto& x = operands[0];
+        if(x.require_grad()) {
+            for(int i = 0;i<x.arr().size();i++){
+                (*(x.grad()))[i] = (*(x.grad()))[i] + external_grad[i];
+            }
+        }
+    }
+    if(operands[1].require_grad()) {
+        auto& x = operands[1];
+        if(x.require_grad()) {
+            for(int i = 0;i<x.arr().size();i++){
+                (*(x.grad()))[i] = (*(x.grad()))[i] - external_grad[i];
+            }
         }
     }
 }
@@ -61,8 +85,9 @@ ScalarMulBackward::ScalarMulBackward(float _scalar, tensor b) {
 void ScalarMulBackward::_backward(Tensor external_grad) {
     for(auto& x : operands) {
         if(x.require_grad()) {
-            // MEMORY LEAK
-            *(x.grad()) = scalar * external_grad;
+            for(int i = 0;i<x.arr().size();i++){
+                (*(x.grad()))[i] = (*(x.grad()))[i] + external_grad[i] * scalar ;
+            }
         }
     }
 }
@@ -92,8 +117,41 @@ SquareBackward::SquareBackward(tensor a) {
 void SquareBackward::_backward(Tensor external_grad) {
     for(auto& x : operands) {
         if(x.require_grad()) {
-            for(int i = 0;i<(x.grad())->arr.size();i++){
-                (*(x.grad()))[i] = ((x[i] > 0) ? external_grad[i] : 0.0);
+            for(int i = 0;i<x.arr().size();i++){
+                (*(x.grad()))[i] = (*(x.grad()))[i] + external_grad[i] * 2 * x[i];
+            }
+        }
+    }
+}
+
+DivisionBackward::DivisionBackward() {}
+
+DivisionBackward::DivisionBackward(float _scalar,tensor a) {
+    this->operands.push_back(a);
+    scalar = _scalar;
+}
+
+void DivisionBackward::_backward(Tensor external_grad) {
+    for(auto& x : operands) {
+        if(x.require_grad()) {
+            for(int i = 0;i<x.arr().size();i++){
+                (*(x.grad()))[i] = (*(x.grad()))[i] + external_grad[i] / scalar ;
+            }
+        }
+    }
+}
+
+SqrtBackward::SqrtBackward() {}
+
+SqrtBackward::SqrtBackward(tensor a) {
+    this->operands.push_back(a);
+}
+
+void SqrtBackward::_backward(Tensor external_grad) {
+    for(auto& x : operands) {
+        if(x.require_grad()) {
+            for(int i = 0;i<x.arr().size();i++){
+                (*(x.grad()))[i] = (*(x.grad()))[i] + external_grad[i] * 0.5 * sqrtf(x[i]) ;
             }
         }
     }

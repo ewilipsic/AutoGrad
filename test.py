@@ -1,24 +1,26 @@
 import torch
 
-# Create tensors with the same values and enable gradient computation
-a = torch.tensor([[-1., -1., 2.], 
-                  [2., -3., 4.], 
-                  [2., -3., 4.]], requires_grad=True)
+# Create tensors with requires_grad=True
+a = torch.full((3, 3), 2.0, requires_grad=True)
+b = torch.full((3, 3), 1.0, requires_grad=True)
 
-b = torch.tensor([[-1., 1., 2.], 
-                  [2., 3., 4.], 
-                  [9., 1., 4.]], requires_grad=True)
+# Compute the operations
+c = torch.square(a)                    # c = a^2
+d = c + b                             # d = c + b = a^2 + b
+e = torch.square(d) + torch.sqrt(b/9)  # e = d^2 + 9*sqrt(b)
 
-# Perform the same operations: c = a + b + matmul(a,b)
-c = a + b + torch.matmul(a, b)
+# Retain gradients for intermediate tensors
+c.retain_grad()
+d.retain_grad()
+e.retain_grad()
 
-# Compute gradients (backward pass)
-# Since c is a matrix, we need to provide a gradient tensor of the same shape
-# Using ones() assumes we want the gradient with respect to the sum of all elements
-c.backward(torch.ones_like(c))
+# Backward pass
+e_sum = e.sum()
+e_sum.backward()
 
-# Print the gradients
-print("Gradient of a:")
-print(a.grad)
-print("\nGradient of b:")
-print(b.grad)
+# Print gradients
+print("a.grad:\n", a.grad)
+print("b.grad:\n", b.grad)
+print("c.grad:\n", c.grad)
+print("d.grad:\n", d.grad)
+print("e.grad:\n", e.grad)

@@ -8,7 +8,6 @@ class Node {
 public:
     std::vector<tensor> operands;
     virtual void _backward(Tensor external_grad) = 0;
-
     ~Node(){
         std::cout<<"Node Destroyed\n";
     }
@@ -20,6 +19,14 @@ public:
     AddBackward(tensor a, tensor b);
     void _backward(Tensor external_grad) override;
 };
+
+class SubtractBackward : public Node {
+public:
+    SubtractBackward();
+    SubtractBackward(tensor a, tensor b);
+    void _backward(Tensor external_grad) override;
+};
+
 class MatmulBackward : public Node {
 public:
     MatmulBackward();
@@ -47,6 +54,21 @@ class SquareBackward : public Node {
 public:
     SquareBackward();
     SquareBackward(tensor a);
+    void _backward(Tensor external_grad) override;
+};
+
+class DivisionBackward : public Node {
+public:
+    float scalar;
+    DivisionBackward();
+    DivisionBackward(float _scalar,tensor a);
+    void _backward(Tensor external_grad) override;
+};
+
+class SqrtBackward : public Node {
+public:
+    SqrtBackward();
+    SqrtBackward(tensor a);
     void _backward(Tensor external_grad) override;
 };
 

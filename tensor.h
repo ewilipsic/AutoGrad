@@ -4,6 +4,7 @@
 #include <vector>
 #include <memory>
 #include <iostream>
+#include <cmath>
 
 // Forward declarations
 class Node;
@@ -93,11 +94,23 @@ void printvec(std::vector<int> vec);
 // Operator declarations
 Tensor operator+(const Tensor& a, const Tensor& b);
 tensor operator+(const tensor a, const tensor b);
+
+tensor operator-(const tensor a, const tensor b);
+
 Tensor operator*(const float& a, const Tensor& b);
 tensor operator*(const float& a, const tensor& b);
+
 Tensor matmul(const Tensor& a, const Tensor& b);
 tensor matmul(const tensor& a, const tensor& b);
+
 tensor Relu(const tensor& a);
+
 bool operator<(const tensor& a, const tensor& b);
+
+tensor square(const tensor& a);
+
+tensor sqrt(const tensor& a);
+
+tensor operator/(const tensor& b,const float& a);
 
 #endif

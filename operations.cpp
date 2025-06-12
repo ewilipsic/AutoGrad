@@ -34,6 +34,28 @@ tensor operator+(const tensor a, const tensor b) {
     return ret;
 }
 
+tensor operator-(const tensor a, const tensor b) {
+    bool get_backward = false;
+    if(a.require_grad() || b.require_grad()) get_backward = true;
+    
+    if(a.shape() != b.shape()) {
+        throw 201;
+    }
+    
+    tensor ret = tensor(a.shape(), 0.0, get_backward);
+    
+    for(int i = 0; i < a.arr().size(); i++) {
+        ret.arr()[i] = a.arr()[i] - b.arr()[i];
+    }
+    
+    if(get_backward) {
+        auto back_fn = new SubtractBackward(a, b);
+        *(ret.grad_fn()) = back_fn;
+    }
+    
+    return ret;
+}
+
 Tensor operator*(const float& a, const Tensor& b) {
     Tensor ret(b.shape, 0, 0);
     for(int i = 0; i < b.arr.size(); i++) {
@@ -126,5 +148,54 @@ bool operator<(const tensor& a, const tensor& b){
 }
 
 tensor square(const tensor& a){
+    bool get_backward = false;
+    if(a.require_grad()) get_backward = true;
     
+    tensor ret = tensor(a.shape(), 0.0, get_backward);
+    
+    for(int i = 0; i < a.arr().size(); i++) {
+        ret.arr()[i] = a.arr()[i] * a.arr()[i];
+    }
+    
+    if(get_backward) {
+        auto back_fn = new SquareBackward(a);
+        *(ret.grad_fn()) = back_fn;
+    }
+    
+    return ret;
+}
+
+tensor sqrt(const tensor& a){
+    bool get_backward = false;
+    if(a.require_grad()) get_backward = true;
+    
+    tensor ret = tensor(a.shape(), 0.0, get_backward);
+    
+    for(int i = 0; i < a.arr().size(); i++) {
+        ret.arr()[i] = sqrtf(a.arr()[i]);
+    }
+    
+    if(get_backward) {
+        auto back_fn = new SqrtBackward(a);
+        *(ret.grad_fn()) = back_fn;
+    }
+    
+    return ret;
+}
+
+tensor operator/(const tensor& b,const float& a){
+    bool get_backward = false;
+    if(b.require_grad()) get_backward = true;
+
+    tensor ret = tensor(b.shape(), 0.0, get_backward);
+    
+    for(int i = 0; i < b.arr().size(); i++) {
+        ret.arr()[i] = b.arr()[i] / a;
+    }
+
+    if(get_backward) {
+        auto back_fn = new DivisionBackward(a, b);
+        *(ret.grad_fn()) = back_fn;
+    }
+    return ret;
 }
