@@ -43,4 +43,11 @@ public:
     void _backward(Tensor external_grad) override;
 };
 
+class SquareBackward : public Node {
+public:
+    SquareBackward();
+    SquareBackward(tensor a);
+    void _backward(Tensor external_grad) override;
+};
+
 #endif

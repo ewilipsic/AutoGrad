@@ -120,6 +120,11 @@ tensor Relu(const tensor& a){
     return ret;
 
 }
+
 bool operator<(const tensor& a, const tensor& b){
     return a.ptr.get() < b.ptr.get();
+}
+
+tensor square(const tensor& a){
+    
 }

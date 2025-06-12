@@ -82,3 +82,19 @@ void ReluBackward::_backward(Tensor external_grad) {
         }
     }
 }
+
+SquareBackward::SquareBackward() {}
+
+SquareBackward::SquareBackward(tensor a) {
+    this->operands.push_back(a);
+}
+
+void SquareBackward::_backward(Tensor external_grad) {
+    for(auto& x : operands) {
+        if(x.require_grad()) {
+            for(int i = 0;i<(x.grad())->arr.size();i++){
+                (*(x.grad()))[i] = ((x[i] > 0) ? external_grad[i] : 0.0);
+            }
+        }
+    }
+}
