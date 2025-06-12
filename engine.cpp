@@ -40,6 +40,9 @@ void backward(tensor start){
                     q.push(child);
                 }
             }
+
+            delete *(current_tensor.grad_fn());
+            *(current_tensor.grad_fn()) = nullptr;
         }
     }
     

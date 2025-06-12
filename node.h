@@ -7,8 +7,11 @@
 class Node {
 public:
     std::vector<tensor> operands;
-    virtual ~Node() = default;
     virtual void _backward(Tensor external_grad) = 0;
+
+    ~Node(){
+        std::cout<<"Node Destroyed\n";
+    }
 };
 
 class AddBackward : public Node {

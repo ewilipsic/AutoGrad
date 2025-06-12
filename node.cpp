@@ -11,7 +11,10 @@ void AddBackward::_backward(Tensor external_grad) {
     for(auto& x : operands) {
         if(x.require_grad()) {
             // MEMORY LEAK
-            *(x.grad()) = *(x.grad()) + external_grad;
+            for(int i = 0;i<x.arr().size();i++){
+                (*(x.grad()))[i] = (*(x.grad()))[i] + external_grad[i];
+            }
+          
         }
     }
 }
