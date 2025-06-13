@@ -1,5 +1,5 @@
-#include "nn.h"
-#include "engine.h"
+#include "src/nn.h"
+#include "src/engine.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -91,7 +91,7 @@ int main() {
     IrisNetwork test = IrisNetwork();
     auto [X_data, y_data] = load_iris_dataset("iris.csv");
     
-    for(int epoch = 0;epoch<60;epoch++){
+    for(int epoch = 0;epoch<80;epoch++){
         float total_loss = 0.0;
         float total_corect = 0.0;
         for(int data_idx = 0;data_idx<X_data.size() ; data_idx++){
@@ -106,7 +106,6 @@ int main() {
                 if(y_data[data_idx][k] > y_data[data_idx][max_idx2]) max_idx2 = k;
             }
             
-            
             if(max_idx2 == max_idx) total_corect++;
             tensor loss = BCEloss(out,y_data[data_idx]);
             backward(loss);
@@ -116,7 +115,7 @@ int main() {
         std::cout<<"epoch : "<<epoch<<std::endl;
         std::cout<<"total loss : "<<total_loss<<std::endl;
         std::cout<<"total correct : "<<total_corect<<std::endl;
-        test.update(0.001);
+        test.update(0.0005);
         test.zero_grad();
     }
 
