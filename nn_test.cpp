@@ -73,7 +73,7 @@ public:
             std::make_shared<Linear>(8, 8),
             std::make_shared<Relu>(),
             std::make_shared<Linear>(8, 3),
-   
+            std::make_shared<Sigmoid>(),
         };
     }
 
@@ -105,11 +105,10 @@ int main() {
             for(int k = 0;k<3;k++){
                 if(y_data[data_idx][k] > y_data[data_idx][max_idx2]) max_idx2 = k;
             }
-            // printvec(out.arr());
-            // printvec(y_data[data_idx].arr());
+            
             
             if(max_idx2 == max_idx) total_corect++;
-            tensor loss = square(out - y_data[data_idx]) ;
+            tensor loss = BCEloss(out,y_data[data_idx]);
             backward(loss);
             total_loss += loss[0] + loss[1] + loss[2];
 
@@ -117,7 +116,7 @@ int main() {
         std::cout<<"epoch : "<<epoch<<std::endl;
         std::cout<<"total loss : "<<total_loss<<std::endl;
         std::cout<<"total correct : "<<total_corect<<std::endl;
-        test.update(0.00003);
+        test.update(0.001);
         test.zero_grad();
     }
 

@@ -176,3 +176,60 @@ void SigmoidBackward::_backward(Tensor external_grad) {
         }
     }
 }
+
+LogBackward::LogBackward() {}
+
+LogBackward::LogBackward(tensor a) {
+    this->operands.push_back(a);
+}
+
+void LogBackward::_backward(Tensor external_grad) {
+    for(auto& x : operands) {
+        if(x.require_grad()) {
+            for(int i = 0;i<x.arr().size();i++){
+                (*(x.grad()))[i] = (*(x.grad()))[i] + external_grad[i] * (1.0/x[i]) ;
+            }
+        }
+    }
+}
+
+ElementwiseMultBackward::ElementwiseMultBackward() {}
+
+ElementwiseMultBackward::ElementwiseMultBackward(tensor a, tensor b) {
+    this->operands.push_back(a);
+    this->operands.push_back(b);
+}
+
+void ElementwiseMultBackward::_backward(Tensor external_grad) {
+    if(operands[0].require_grad()){
+        for(int i = 0;i<operands[0].shape()[0];i++){
+            for(int j = 0;j<operands[0].shape()[1];j++){
+                (*(operands[0].grad()))[{i,j}] += external_grad[{i,j}] * (operands[1])[{i,j}];
+            }
+        }
+    }
+    if(operands[1].require_grad()){
+        for(int i = 0;i<operands[1].shape()[0];i++){
+            for(int j = 0;j<operands[1].shape()[1];j++){
+                (*(operands[1].grad()))[{i,j}] += external_grad[{i,j}] * (operands[0])[{i,j}];
+            }
+        }
+    }
+}
+
+ScalarSubBackward::ScalarSubBackward() {}
+
+ScalarSubBackward::ScalarSubBackward(float _scalar, tensor b) {
+    this->operands.push_back(b);
+    scalar = _scalar;
+}
+
+void ScalarSubBackward::_backward(Tensor external_grad) {
+    for(auto& x : operands) {
+        if(x.require_grad()) {
+            for(int i = 0;i<x.arr().size();i++){
+                (*(x.grad()))[i] = (*(x.grad()))[i] - external_grad[i];
+            }
+        }
+    }
+}

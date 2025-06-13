@@ -79,4 +79,26 @@ public:
     void _backward(Tensor external_grad) override;
 };
 
+class LogBackward : public Node {
+public:
+    LogBackward();
+    LogBackward(tensor a);
+    void _backward(Tensor external_grad) override;
+};
+
+class ElementwiseMultBackward : public Node {
+public:
+    ElementwiseMultBackward();
+    ElementwiseMultBackward(tensor a,tensor b);
+    void _backward(Tensor external_grad) override;
+};
+
+class ScalarSubBackward : public Node {
+public:
+    float scalar;
+    ScalarSubBackward();
+    ScalarSubBackward(float _scalar,tensor b);
+    void _backward(Tensor external_grad) override;
+};
+
 #endif

@@ -1,5 +1,13 @@
 #include "nn.h"
 
+tensor MSEloss(const tensor& y_pred,const tensor& y_true){
+    return square(y_pred - y_true) / y_pred.shape()[0];
+}
+
+tensor BCEloss(const tensor& y_pred,const tensor& y_true){
+    return -y_pred.shape()[0] * (y_true * (Log(y_pred)) + (1 - y_true) * (Log(1 - y_pred)));
+}
+
 Linear::Linear(int in_dims,int out_dims){
     input_dims = in_dims;
     output_dims = out_dims;

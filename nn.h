@@ -58,11 +58,9 @@ class model{
             p->zero_grad();
         }
     }
-
 };
 
-tensor MSEloss(const tensor& y_pred,const tensor& y_true){
-    return square(y_pred - y_true) / y_pred.shape()[0];
-}
+tensor MSEloss(const tensor& y_pred,const tensor& y_true);
+tensor BCEloss(const tensor& y_pred,const tensor& y_true);
 
 #endif
