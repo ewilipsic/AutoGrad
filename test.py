@@ -1,26 +1,89 @@
 import torch
+import torch.nn as nn
+import torch.optim as optim
+from sklearn.datasets import load_iris
+from sklearn.preprocessing import StandardScaler
+import numpy as np
 
-# Create tensors with requires_grad=True
-a = torch.full((3, 3), 2.0, requires_grad=True)
-b = torch.full((3, 3), 1.0, requires_grad=True)
+class IrisNetwork(nn.Module):
+    def __init__(self):
+        super(IrisNetwork, self).__init__()
+        self.layers = nn.Sequential(
+            nn.Linear(4, 8),
+            nn.ReLU(),
+            nn.Linear(8, 8),
+            nn.ReLU(),
+            nn.Linear(8, 3),
+            nn.Sigmoid()  # Add sigmoid for BCE loss
+        )
+    
+    def forward(self, x):
+        return self.layers(x)
 
-# Compute the operations
-c = torch.square(a)                    # c = a^2
-d = c + b                             # d = c + b = a^2 + b
-e = torch.square(d) + torch.sqrt(b/9)  # e = d^2 + 9*sqrt(b)
+def load_iris_pytorch():
+    # Load iris dataset
+    iris = load_iris()
+    X = iris.data.astype(np.float32)
+    y = iris.target
+    
+    # Convert to one-hot encoding
+    y_onehot = np.zeros((y.size, 3), dtype=np.float32)
+    y_onehot[np.arange(y.size), y] = 1
+    
+    # Convert to PyTorch tensors
+    X_tensor = torch.from_numpy(X)
+    y_tensor = torch.from_numpy(y_onehot)
+    
+    return X_tensor, y_tensor
 
-# Retain gradients for intermediate tensors
-c.retain_grad()
-d.retain_grad()
-e.retain_grad()
+def main():
+    # Load data
+    X_data, y_data = load_iris_pytorch()
+    
+    # Create model
+    model = IrisNetwork()
+    
+    # BCE Loss function
+    criterion = nn.BCELoss()
+    
+    # Training loop
+    for epoch in range(60):
+        total_loss = 0.0
+        total_correct = 0.0
+        
+        for data_idx in range(len(X_data)):
+            # Forward pass
+            x_sample = X_data[data_idx].unsqueeze(0)  # Add batch dimension
+            y_sample = y_data[data_idx].unsqueeze(0)  # Add batch dimension
+            
+            output = model(x_sample)
+            
+            # Calculate accuracy
+            pred_idx = torch.argmax(output, dim=1).item()
+            true_idx = torch.argmax(y_sample, dim=1).item()
+            
+            if pred_idx == true_idx:
+                total_correct += 1
+            
+            # Calculate BCE loss
+            loss = criterion(output, y_sample)
+            total_loss += loss.item()
+            
+            # Backward pass
+            loss.backward()
+            
+            # Manual parameter update (matching your learning rate)
+            with torch.no_grad():
+                for param in model.parameters():
+                    if param.grad is not None:
+                        param -= 0.003 * param.grad
+            
+            # Zero gradients
+            model.zero_grad()
+        
+        print(f"epoch : {epoch}")
+        print(f"total loss : {total_loss}")
+        print(f"total correct : {total_correct}")
 
-# Backward pass
-e_sum = e.sum()
-e_sum.backward()
-
-# Print gradients
-print("a.grad:\n", a.grad)
-print("b.grad:\n", b.grad)
-print("c.grad:\n", c.grad)
-print("d.grad:\n", d.grad)
-print("e.grad:\n", e.grad)
+if __name__ == "__main__":
+    main()

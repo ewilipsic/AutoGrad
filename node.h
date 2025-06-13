@@ -9,7 +9,7 @@ public:
     std::vector<tensor> operands;
     virtual void _backward(Tensor external_grad) = 0;
     ~Node(){
-        std::cout<<"Node Destroyed\n";
+       
     }
 };
 
@@ -69,6 +69,13 @@ class SqrtBackward : public Node {
 public:
     SqrtBackward();
     SqrtBackward(tensor a);
+    void _backward(Tensor external_grad) override;
+};
+
+class SigmoidBackward : public Node {
+public:
+    SigmoidBackward();
+    SigmoidBackward(tensor a);
     void _backward(Tensor external_grad) override;
 };
 

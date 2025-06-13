@@ -5,6 +5,7 @@
 #include <memory>
 #include <iostream>
 #include <cmath>
+#include <random>
 
 // Forward declarations
 class Node;
@@ -32,6 +33,7 @@ class Tensor{
     size_t compute_flat_index(std::initializer_list<int> indices) const;
 
     void fill(float f);
+    void fill_random();
     void _backward();
 
     float& operator[] (size_t index) {
@@ -63,6 +65,7 @@ public:
     int& out_degree() const;
     void _backward() const;
     void fill(float f) ;
+    void fill_random() ;
 
     float& operator[] (size_t index) {
         return (*ptr)[index];
@@ -103,13 +106,15 @@ tensor operator*(const float& a, const tensor& b);
 Tensor matmul(const Tensor& a, const Tensor& b);
 tensor matmul(const tensor& a, const tensor& b);
 
-tensor Relu(const tensor& a);
+tensor relu(const tensor& a);
 
 bool operator<(const tensor& a, const tensor& b);
 
 tensor square(const tensor& a);
 
 tensor sqrt(const tensor& a);
+
+tensor sigmoid(const tensor& a);
 
 tensor operator/(const tensor& b,const float& a);
 

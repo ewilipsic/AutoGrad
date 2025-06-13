@@ -7,9 +7,9 @@ int main() {
 
     tensor a(std::make_shared<Tensor>(std::vector<int>({3, 3}), std::vector<std::vector<float>>({{2,2,2}, {2,2,2}, {2,2,2}}), 1));
     tensor b(std::make_shared<Tensor>(std::vector<int>({3, 3}), std::vector<std::vector<float>>({{1,1,1}, {1,1,1}, {1,1,1}}), 1));
-    tensor c = square(a);
-    tensor d = c + b;
-    tensor e = square(d) + 9 * sqrt(b/9);
+    tensor c = sigmoid(b);
+    tensor d = sigmoid(a);
+    tensor e = c + d;
 
     backward(e);
 

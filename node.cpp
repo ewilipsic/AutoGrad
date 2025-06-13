@@ -156,3 +156,23 @@ void SqrtBackward::_backward(Tensor external_grad) {
         }
     }
 }
+
+float sigmoid(float f){
+    return 1.0 / (1 + expf(-f));
+}
+
+SigmoidBackward::SigmoidBackward() {}
+
+SigmoidBackward::SigmoidBackward(tensor a) {
+    this->operands.push_back(a);
+}
+
+void SigmoidBackward::_backward(Tensor external_grad) {
+    for(auto& x : operands) {
+        if(x.require_grad()) {
+            for(int i = 0;i<x.arr().size();i++){
+                (*(x.grad()))[i] = (*(x.grad()))[i] + external_grad[i] * sigmoid(x[i]) * (1.0 - sigmoid(x[i])) ;
+            }
+        }
+    }
+}

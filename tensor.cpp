@@ -11,7 +11,7 @@ Tensor::Tensor(std::vector<int> _shape, const std::vector<T1>& _vec, int _requir
     }
     
     if(size != get_element_count(_vec)) throw 100;
-    std::cout << "Tensor Created\n";
+    // std::cout << "Tensor Created\n";
 
     arr.reserve(size);
     copy_elements(_vec, arr);
@@ -31,7 +31,7 @@ Tensor::Tensor(std::vector<int> _shape, float fill, int _require_grad) {
         size *= s;
         shape.push_back(s);
     }
-    std::cout << "Tensor Created\n";
+    // std::cout << "Tensor Created\n";
     
     compute_strides();
     arr = std::vector<float>(size, fill);
@@ -44,7 +44,7 @@ Tensor::Tensor(std::vector<int> _shape, float fill, int _require_grad) {
 }
 
 Tensor::~Tensor() {
-    std::cout << "Tensor Destroyed\n";
+    // std::cout << "Tensor Destroyed\n";
     if(grad) delete grad;
     if(grad_fn) delete grad_fn;
 }
@@ -56,6 +56,17 @@ void Tensor::_backward(){
 void Tensor::fill(float f){
     for(float& i : arr){
         i = f;
+    }
+}
+
+void Tensor::fill_random(){
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::normal_distribution<float> dis(0.0f, 0.3f);  // mean=0, std=1
+    
+    for(float& i : arr) {
+        i = dis(gen);
+        if(i < 0.1 && i > -0.1) i = 0.1;
     }
 }
 
@@ -94,6 +105,7 @@ Node** TensorProxy::grad_fn() { return &(ptr->grad_fn); }
 int& TensorProxy::out_degree() const { return ptr->out_degree; }
 void TensorProxy::_backward() const {ptr->_backward();}
 void TensorProxy::fill(float f) { ptr->fill(f); }
+void TensorProxy::fill_random() { ptr->fill_random(); }
 
 // Explicit template instantiation
 template Tensor::Tensor(std::vector<int>, const std::vector<float>&, int);

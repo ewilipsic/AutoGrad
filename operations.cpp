@@ -124,7 +124,7 @@ tensor matmul(const tensor& a, const tensor& b) {
     return ret;
 }
 
-tensor Relu(const tensor& a){
+tensor relu(const tensor& a){
     bool get_backward = false;
     if(a.require_grad()) get_backward = true;
     
@@ -177,6 +177,24 @@ tensor sqrt(const tensor& a){
     
     if(get_backward) {
         auto back_fn = new SqrtBackward(a);
+        *(ret.grad_fn()) = back_fn;
+    }
+    
+    return ret;
+}
+
+tensor sigmoid(const tensor& a){
+    bool get_backward = false;
+    if(a.require_grad()) get_backward = true;
+    
+    tensor ret = tensor(a.shape(), 0.0, get_backward);
+    
+    for(int i = 0; i < a.arr().size(); i++) {
+        ret.arr()[i] = 1.0 / (1 + expf(-a.arr()[i]));
+    }
+    
+    if(get_backward) {
+        auto back_fn = new SigmoidBackward(a);
         *(ret.grad_fn()) = back_fn;
     }
     
