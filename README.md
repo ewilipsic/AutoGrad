@@ -30,7 +30,7 @@ The library is organized into several key modules[2]:
 
 ### Computational Graph
 
-Grail builds a computational graph during the forward pass and uses reverse-mode differentiation to compute gradients efficiently. Each operation creates nodes in the graph with backward functions that implement the chain rule.<br>
+Grail builds a computational graph during the forward pass and uses reverse-mode differentiation to compute gradients efficiently. Each operation creates nodes in the graph with backward functions that implement the chain rule.<br><br>
 ![Image showing a Exmaple computation graph.](readme_computation_graph.png)
 
 ## Installation
