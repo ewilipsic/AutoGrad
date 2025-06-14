@@ -1,21 +1,24 @@
-#include "src/grail.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <string>
 #include <vector>
+#include "..\..\src\grail.h" 
 
 using namespace grail;
 
 std::pair<std::vector<tensor>, std::vector<tensor>> load_iris_dataset(const std::string& filename) {
+
     std::vector<tensor> features;
     std::vector<tensor> labels;
     
     std::ifstream file(filename);
     std::string line;
-    
 
-    while (std::getline(file, line)) {
+    
+    
+    while (file.good()) {
+        
         
         std::vector<float> feature_row;
         std::string species;
@@ -91,8 +94,9 @@ int main() {
 
     IrisNetwork test = IrisNetwork();
     auto [X_data, y_data] = load_iris_dataset("iris.csv");
+ 
     
-    for(int epoch = 0;epoch<80;epoch++){
+    for(int epoch = 0;epoch<100;epoch++){
         float total_loss = 0.0;
         float total_corect = 0.0;
         for(int data_idx = 0;data_idx<X_data.size() ; data_idx++){
@@ -106,6 +110,8 @@ int main() {
             for(int k = 0;k<3;k++){
                 if(y_data[data_idx][k] > y_data[data_idx][max_idx2]) max_idx2 = k;
             }
+
+    
             
             if(max_idx2 == max_idx) total_corect++;
             tensor loss = BCEloss(out,y_data[data_idx]);
@@ -116,7 +122,7 @@ int main() {
         std::cout<<"epoch : "<<epoch<<std::endl;
         std::cout<<"total loss : "<<total_loss<<std::endl;
         std::cout<<"total correct : "<<total_corect<<std::endl;
-        test.update(0.0005);
+        test.update(0.00020);
         test.zero_grad();
     }
 
