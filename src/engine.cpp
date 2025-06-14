@@ -3,6 +3,8 @@
 #include<set>
 #include<queue>
 
+namespace grail {
+
 void backward(tensor start){
 
     // give out degrees
@@ -46,9 +48,6 @@ void backward(tensor start){
         }
     }
     
-
-
-
-
+}
 
 }

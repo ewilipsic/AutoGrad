@@ -3,6 +3,8 @@
 
 #include "node.h"
 
+namespace grail {
+
 class module{
     public:
     virtual tensor forward(tensor input) = 0;
@@ -63,5 +65,6 @@ class model{
 tensor MSEloss(const tensor& y_pred,const tensor& y_true);
 tensor BCEloss(const tensor& y_pred,const tensor& y_true);
 
+}
 
 #endif

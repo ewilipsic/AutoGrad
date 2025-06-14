@@ -4,6 +4,7 @@
 #include "tensor.h"
 #include <vector>
 
+namespace grail{
 class Node {
 public:
     std::vector<tensor> operands;
@@ -100,5 +101,7 @@ public:
     ScalarSubBackward(float _scalar,tensor b);
     void _backward(Tensor external_grad) override;
 };
+
+}
 
 #endif

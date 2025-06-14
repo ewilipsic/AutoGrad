@@ -1,5 +1,6 @@
 #include "node.h"
 
+namespace grail {
 AddBackward::AddBackward() {}
 
 AddBackward::AddBackward(tensor a, tensor b) {
@@ -232,4 +233,6 @@ void ScalarSubBackward::_backward(Tensor external_grad) {
             }
         }
     }
+}
+
 }

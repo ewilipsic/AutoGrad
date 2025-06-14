@@ -3,6 +3,8 @@
 #include <iostream>
 
 // Tensor implementation
+namespace grail {
+
 template <typename T1>
 Tensor::Tensor(std::vector<int> _shape, const std::vector<T1>& _vec, int _require_grad) {
     int size = 1;
@@ -110,3 +112,5 @@ void TensorProxy::fill_random() { ptr->fill_random(); }
 // Explicit template instantiation
 template Tensor::Tensor(std::vector<int>, const std::vector<float>&, int);
 template Tensor::Tensor(std::vector<int>, const std::vector<std::vector<float>>&, int);
+
+}

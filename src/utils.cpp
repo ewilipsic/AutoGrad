@@ -1,6 +1,8 @@
 #include "tensor.h"
 #include <iostream>
 
+namespace grail{
+
 void printvec(std::vector<float> vec) {
     for(auto& x : vec) std::cout << x << " ";
     std::cout << std::endl;
@@ -40,3 +42,5 @@ template int get_element_count(const std::vector<float>& vec);
 template int get_element_count(const std::vector<std::vector<float>>& vec);
 template void copy_elements(const std::vector<float>& f, std::vector<float>& vec);
 template void copy_elements(const std::vector<std::vector<float>>& f, std::vector<float>& vec);
+
+}

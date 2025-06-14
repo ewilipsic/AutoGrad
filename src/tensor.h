@@ -8,6 +8,7 @@
 #include <random>
 
 // Forward declarations
+namespace grail {
 class Node;
 class Tensor;
 
@@ -122,5 +123,7 @@ tensor operator/(const tensor& b,const float& a);
 tensor Log(const tensor& a);
 
 tensor operator*(const tensor& a, const tensor& b);
+
+}
 
 #endif

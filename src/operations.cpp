@@ -1,6 +1,8 @@
 #include "tensor.h"
 #include "node.h"
 
+namespace grail {
+
 Tensor operator+(const Tensor& a, const Tensor& b) {
     if(a.shape != b.shape) {
         throw 200;
@@ -273,4 +275,6 @@ tensor operator*(const tensor& a, const tensor& b) {
     }
     
     return ret;
+}
+
 }

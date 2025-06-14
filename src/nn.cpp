@@ -1,5 +1,7 @@
 #include "nn.h"
 
+namespace grail{
+
 tensor MSEloss(const tensor& y_pred,const tensor& y_true){
     return square(y_pred - y_true) / y_pred.shape()[0];
 }
@@ -46,6 +48,7 @@ tensor Sigmoid::forward(tensor input){return sigmoid(input);}
 void Sigmoid::update(float learning_rate){}
 void Sigmoid::zero_grad(){}
 
+}
 
 
 
