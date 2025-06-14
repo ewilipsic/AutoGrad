@@ -63,4 +63,5 @@ class model{
 tensor MSEloss(const tensor& y_pred,const tensor& y_true);
 tensor BCEloss(const tensor& y_pred,const tensor& y_true);
 
+
 #endif

@@ -1,10 +1,11 @@
-#include "src/nn.h"
-#include "src/engine.h"
+#include "src/grail.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <string>
 #include <vector>
+
+using namespace grail;
 
 std::pair<std::vector<tensor>, std::vector<tensor>> load_iris_dataset(const std::string& filename) {
     std::vector<tensor> features;
