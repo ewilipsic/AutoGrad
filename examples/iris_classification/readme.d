@@ -1,2 +1,0 @@
-### Overview
-The iris classification example demonstrates how to implement a complete neural network for multi-class classification using Grail's reverse-mode automatic differentiation capabilities . This classic machine learning problem involves categorizing iris flowers into three species based on four morphological measurements, making it an ideal benchmark for educational purposes and algorithm validation 
