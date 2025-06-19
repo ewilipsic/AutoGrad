@@ -235,4 +235,107 @@ void ScalarSubBackward::_backward(Tensor external_grad) {
     }
 }
 
+conv2dBackward::conv2dBackward() {}
+
+conv2dBackward::conv2dBackward( tensor input, 
+                    tensor weight, 
+                    int _stride_h,int _stride_w, int _padding_h,int _padding_w){
+
+    this->operands.push_back(input);
+    this->operands.push_back(weight);
+    stride_h = _stride_h;
+    stride_w = _stride_w;
+    padding_h = _padding_h;
+    padding_w = _padding_w;
 }
+
+void conv2dBackward::_backward(Tensor external_grad) {
+
+    tensor input = operands[0];
+    tensor weight = operands[1];
+
+    int batch_size = input.shape()[0];
+    int in_channels = input.shape()[1];
+    int in_height = input.shape()[2];
+    int in_width = input.shape()[3];
+
+    int out_channels = weight.shape()[0];
+    int kernel_height = weight.shape()[2];
+    int kernel_width = weight.shape()[3];
+
+    int out_height = (in_height + 2 * padding_h - kernel_height) / stride_h + 1;
+    int out_width = (in_width + 2 * padding_w - kernel_width) / stride_w + 1;
+
+    if(input.require_grad()){
+        for(int b = 0;b<batch_size;b++){
+            for(int ic = 0;ic<in_channels;ic++){
+            
+                for(int ih = 0;ih<in_height;ih++){
+                    for(int iw = 0;iw<in_width;iw++){
+
+                        float sum = 0.0;
+
+                        for(int oc = 0;oc < out_channels ;oc++){
+                            int ki_initial = (1 + iw + kernel_width) / stride_w + 1;
+                            int kj_initial = (1 + ih + kernel_height) / stride_h + 1;
+
+
+                            
+                            for(int ki = ki_initial;1 + (ki_initial - ki)*stride_w <= kernel_width ;ki--){
+                                for(int kj = kj_initial; 1 + (kj_initial - kj)*stride_h <= kernel_height  ; kj--){
+
+                                    // implicit zero padding
+                                    if(!(ki >= 0 && kj >= 0 && ki < out_width && kj < out_height)) continue;
+                                    sum += external_grad[{b,oc,kj,ki}] * weight[{oc,ic,stride_h * (kj_initial - kj),stride_w * (ki_initial - ki)}];
+
+                                }
+                            }
+                        }
+
+                        (*input.grad())[{b,ic,ih,iw}] += sum;
+                    }
+                }
+            }
+        }
+    }
+
+    if(weight.require_grad()){
+        for(int b = 0;b < batch_size;b++){
+        for(int oc = 0;oc < out_channels;oc++){
+            for(int ic = 0;ic < in_channels ;ic++){
+                for(int kh = 0;kh < kernel_height;kh++){
+                    for(int kw = 0;kw < kernel_width;kw++){
+
+                        int start_i = -padding_w + kw;
+                        int start_j = -padding_h + kh;
+                        
+                        float sum = 0.0;
+                        
+                        int output_i = 0;
+                        int output_j = 0;
+                        for(int input_i = start_i ; input_i < in_width ; input_i+= stride_w){
+                            int output_j = 0;
+                            for(int input_j = start_j ; input_j < in_height ; input_j += stride_h){
+                                if(!(input_j >= 0 && input_i >= 0 && output_i < out_width && output_j < out_height)) continue;
+                                sum += external_grad[{b,oc,output_j,output_i}] * input[{b,ic,input_j,input_i}];
+                                output_j++; 
+                            }
+                            output_i++;
+                        }
+
+                        (*weight.grad())[{oc,ic,kh,kw}] += sum;
+                    }
+                }
+            }
+        }
+        }
+    }
+
+
+    
+}
+
+
+}
+
+

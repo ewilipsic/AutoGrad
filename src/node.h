@@ -102,6 +102,16 @@ public:
     void _backward(Tensor external_grad) override;
 };
 
+class conv2dBackward : public Node {
+public:
+    int stride_h,stride_w,padding_h,padding_w;
+    conv2dBackward();
+    conv2dBackward( tensor input, 
+                    tensor weight, 
+                    int _stride_h,int _stride_w, int _padding_h,int _padding_w);
+    void _backward(Tensor external_grad) override;
+};
+
 }
 
 #endif

@@ -66,7 +66,6 @@ Tensor operator*(const float& a, const Tensor& b) {
     return ret;
 }
 
-
 tensor operator*(const float& a, const tensor& b) {
     bool get_backward = false;
     if(b.require_grad()) get_backward = true;
@@ -276,5 +275,80 @@ tensor operator*(const tensor& a, const tensor& b) {
     
     return ret;
 }
+
+tensor conv2d(  tensor input, 
+                tensor weight, 
+                int stride_h,int stride_w, int padding_h,int padding_w) {
+    
+    
+    bool get_backward = false;
+    if(input.require_grad() || weight.require_grad()) get_backward = true;
+
+    int batch_size = input.shape()[0];
+    int in_channels = input.shape()[1];
+    int in_height = input.shape()[2];
+    int in_width = input.shape()[3];
+    
+    // Weight shape: [out_channels, in_channels, kernel_height, kernel_width]
+    int out_channels = weight.shape()[0];
+    int kernel_height = weight.shape()[2];
+    int kernel_width = weight.shape()[3];
+    
+    // Calculate output dimensions
+    int out_height = (in_height + 2 * padding_h - kernel_height) / stride_h + 1;
+    int out_width = (in_width + 2 * padding_w - kernel_width) / stride_w + 1;
+    
+    // Create output tensor
+    std::vector<int> output_shape;
+
+    output_shape = {batch_size, out_channels, out_height, out_width};
+  
+    
+    tensor output(output_shape,0.0,get_backward);
+    
+ 
+    // Perform convolution
+    for (int b = 0; b < batch_size; b++) {
+        for (int oc = 0; oc < out_channels; oc++) {
+
+            for (int oh = 0; oh < out_height; oh++) {
+                for (int ow = 0; ow < out_width; ow++) {
+                    float sum = 0.0f;
+                    
+                    // Convolve over kernel
+                    for (int ic = 0; ic < in_channels; ic++) {
+                        for (int kh = 0; kh < kernel_height; kh++) {
+                            for (int kw = 0; kw < kernel_width; kw++) {
+
+                                int ih = oh * stride_h - padding_h + kh;
+                                int iw = ow * stride_w - padding_w + kw;
+                                
+                                // Check bounds (implicit zero padding)
+                                if (ih >= 0 && ih < in_height && iw >= 0 && iw < in_width) {
+                                    int input_idx, weight_idx;
+                                
+                                    sum += input[{b,ic,ih,iw}] * weight[{oc,ic,kh,kw}];
+                                }
+                            }
+                        }
+                    }
+                    
+                    // Store result
+                    output[{b,oc,oh,ow}] = sum;
+                }
+            }
+        }
+    }
+    
+    if(get_backward) {
+        auto back_fn = new conv2dBackward(input,weight,stride_h,stride_w,padding_h,padding_w);
+        *(output.grad_fn()) = back_fn;
+    }
+    // Set up gradient computation
+
+    return output;
+}
+
+
 
 }

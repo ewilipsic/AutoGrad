@@ -43,6 +43,24 @@ class Sigmoid : public module{
     void zero_grad();
 };
 
+class Conv2D : public module{
+    public:
+    tensor weight;
+    tensor bias;
+    int stride_h;
+    int stride_w;
+    int padding_h;
+    int padding_w;
+    int kernel_h;
+    int kernel_w;
+    int in_channels;
+    int out_channels;
+    Conv2D(tensor _weight,tensor _bias,int _stride_h = 1,int _stride_w = 1,int _padding_h = 0,int _padding_w = 0,int _kernel_h = 3,int _kernel_w = 3,int _in_channels = 1,int _out_chanels = 1);
+    tensor forward(tensor input);
+    void update(float learning_rate);
+    void zero_grad();
+};
+
 class model{
     public:
     std::vector<std::shared_ptr<module>> params;

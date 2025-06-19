@@ -48,6 +48,43 @@ tensor Sigmoid::forward(tensor input){return sigmoid(input);}
 void Sigmoid::update(float learning_rate){}
 void Sigmoid::zero_grad(){}
 
+Conv2D::Conv2D(tensor _weight,tensor _bias,int _stride_h,int _stride_w,int _padding_h,int _padding_w,int _kernel_h,int _kernel_w,int _in_channels,int _out_chanels){
+
+    weight = _weight;
+    bias = _bias;
+    stride_h = _stride_h;
+    stride_w = _stride_w;
+    padding_h = _padding_h;
+    padding_w = _padding_w;
+    kernel_h = _kernel_h;
+    kernel_w = _kernel_w;
+    in_channels = _in_channels;
+    out_channels = _out_chanels;
+
+}
+
+tensor Conv2D::forward(tensor input){
+    tensor output = conv2d(input,weight,stride_h,stride_w,padding_h,padding_w);
+    output = output + bias;
+    return output;
+}
+
+void Conv2D::update(float learning_rate){
+
+    for(int i = 0;i<weight.arr().size() && weight.require_grad();i++){
+        weight[i] = weight[i] - learning_rate * (*weight.grad())[i];
+    }
+
+    for(int i = 0;i<bias.arr().size() && bias.require_grad();i++){
+        bias[i] = bias[i] - learning_rate * (*bias.grad())[i];
+    }
+}
+
+void Conv2D::zero_grad(){
+    if(weight.require_grad()) weight.grad()->fill(0.0);
+    if(bias.require_grad()) bias.grad()->fill(0.0);
+}
+
 }
 
 

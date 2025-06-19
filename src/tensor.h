@@ -124,6 +124,10 @@ tensor Log(const tensor& a);
 
 tensor operator*(const tensor& a, const tensor& b);
 
+tensor conv2d(  tensor input, 
+                tensor weight, 
+                int stride_h,int stride_w, int padding_h,int padding_w);
+
 }
 
 #endif
