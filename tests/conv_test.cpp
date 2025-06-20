@@ -2,7 +2,7 @@
 #include <cassert>
 #include <cmath>
 #include <random>
-#include "src\grail.h"
+#include "..\src\grail.h"
 
 using namespace grail;
 
@@ -30,7 +30,6 @@ void test_conv2d() {
     
     // Create bias
     tensor bias({1,1,3,3}, 0.0, true);
-    bias[0] = 0.5;
     
     // Create Conv2D layer
     Conv2D conv(weight, bias, 1, 1, 0, 0, 3, 3, 1, 1);

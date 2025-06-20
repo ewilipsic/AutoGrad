@@ -43,6 +43,11 @@ tensor Relu::forward(tensor input){return relu(input);}
 void Relu::update(float learning_rate){}
 void Relu::zero_grad(){}
 
+Resize::Resize(std::vector<int> _shape){shape = _shape;}
+tensor Resize::forward(tensor input){return resize(input,shape);}
+void Resize::update(float learning_rate){}
+void Resize::zero_grad(){}
+
 Sigmoid::Sigmoid(){}
 tensor Sigmoid::forward(tensor input){return sigmoid(input);}
 void Sigmoid::update(float learning_rate){}

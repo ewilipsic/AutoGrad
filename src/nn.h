@@ -61,6 +61,15 @@ class Conv2D : public module{
     void zero_grad();
 };
 
+class Resize : public module{
+    public:
+    std::vector<int> shape;
+    Resize(std::vector<int> _shape);
+    tensor forward(tensor input);
+    void update(float learning_rate);
+    void zero_grad();
+};
+
 class model{
     public:
     std::vector<std::shared_ptr<module>> params;

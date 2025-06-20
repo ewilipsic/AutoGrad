@@ -112,6 +112,13 @@ public:
     void _backward(Tensor external_grad) override;
 };
 
+class resizeBackward : public Node {
+public:
+    resizeBackward();
+    resizeBackward(tensor a);
+    void _backward(Tensor external_grad) override;
+};
+
 }
 
 #endif

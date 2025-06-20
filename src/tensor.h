@@ -128,6 +128,9 @@ tensor conv2d(  tensor input,
                 tensor weight, 
                 int stride_h,int stride_w, int padding_h,int padding_w);
 
+tensor resize(const tensor& a,std::vector<int> shape);
+
 }
+
 
 #endif

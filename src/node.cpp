@@ -335,6 +335,22 @@ void conv2dBackward::_backward(Tensor external_grad) {
     
 }
 
+resizeBackward::resizeBackward() {}
+
+resizeBackward::resizeBackward(tensor a) {
+    this->operands.push_back(a);
+}
+
+void resizeBackward::_backward(Tensor external_grad) {
+    for(auto& x : operands) {
+        if(x.require_grad()) {
+            for(int i = 0;i<(x.grad())->arr.size();i++){
+                (*(x.grad()))[i] = external_grad[i];
+            }
+        }
+    }
+}
+
 
 }
 

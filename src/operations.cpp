@@ -349,6 +349,23 @@ tensor conv2d(  tensor input,
     return output;
 }
 
+tensor resize(const tensor& a,std::vector<int> shape){
+    bool get_backward = false;
+    if(a.require_grad()) get_backward = true;
+    
+    tensor ret = tensor(shape, 0.0, get_backward);
+    
+    for(int i = 0; i < a.arr().size(); i++) {
+        ret.arr()[i] = a.arr()[i];
+    }
+    
+    if(get_backward) {
+        auto back_fn = new resizeBackward(a);
+        *(ret.grad_fn()) = back_fn;
+    }
+    
+    return ret;
 
+}
 
 }
