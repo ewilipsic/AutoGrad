@@ -276,6 +276,11 @@ tensor operator*(const tensor& a, const tensor& b) {
     return ret;
 }
 
+// input {batch , channels in , height in , width in}
+// output { bacth , channels out , height out , width out}
+// bias -> ouptut ( broadcasting not yet implemented)
+// weight - > { channels out , channels in , kernel height , kernel width }
+
 tensor conv2d(  tensor input, 
                 tensor weight, 
                 int stride_h,int stride_w, int padding_h,int padding_w) {
