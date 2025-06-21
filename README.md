@@ -12,6 +12,7 @@ Grail is a lightweight automatic differentiation (autodiff) library implemented 
 - **Reverse-Mode Autodiff**: Implements efficient reverse-mode automatic differentiation with computational graph
 - **Tensor Operations**: Multi-dimensional array support with automatic gradient tracking
 - **Neural Network Layers**: Built-in support for common NN layers (Linear, ReLU, Sigmoid)
+- **Convolutional Layers**: Built-in support for 2D convolution
 - **Loss Functions**: Includes MSE and Binary Cross-Entropy loss functions
 - **Operator Overloading**: Intuitive mathematical expressions using C++ operator overloading
 
@@ -33,25 +34,6 @@ The library is organized into several key modules[2]:
 Grail builds a computational graph during the forward pass and uses reverse-mode differentiation to compute gradients efficiently. Each operation creates nodes in the graph with backward functions that implement the chain rule.<br><br>
 ![Image showing a Exmaple computation graph.](readme_computation_graph.png)
 
-## Installation
-
-### Requirements
-- C++17 compatible compiler (GCC 7+, Clang 5+, MSVC 2017+)
-- No external dependencies required
-
-### Build Instructions
-
-Since Grail is a header-based library, you can include it directly in your project:
-
-```bash
-git clone https://github.com/ewilipsic/Grail-A_autograd_library_from_scatch.git
-cd Grail-A_autograd_library_from_scatch
-```
-
-Include the main header in your C++ files:
-```cpp
-#include "src/grail.h"
-```
 ## Supported Operations
 
 ### Tensor Operations
@@ -59,11 +41,16 @@ Include the main header in your C++ files:
 - **Matrix Operations**: Matrix multiplication (`matmul`)
 - **Activation Functions**: ReLU, Sigmoid
 - **Mathematical Functions**: Square, Square root, Logarithm
+- **Tensor operations**: Resize
 
 ### Neural Network Layers
 - **Linear Layer**: Fully connected layer with weights and bias
 - **Activation Layers**: ReLU, Sigmoid
 - **Sequential Model**: Container for chaining multiple layers
+
+### Convolutional Layers
+- **Conv2D**: 2 Dimensional Convolution supporting arbitary kernel size, stride & padding
+- **Max pooling**: Maximum pooling layer to help in reducing dimensions. (Work in progress)
 
 ### Loss Functions
 - **Mean Squared Error (MSE)**: For regression tasks
@@ -84,6 +71,27 @@ Grail is designed for clarity of implementation. Key characteristics:
 - **Reverse-Mode**: Computational graph is generated during foward pass and traversed backward to calculate gradients
 - **Memory Management**: Automatic gradient accumulation and storage
 - **Computational Graph**: Dynamic graph construction during forward pass
+
+
+## Installation
+
+### Requirements
+- C++17 compatible compiler (GCC 7+, Clang 5+, MSVC 2017+)
+- No external dependencies required
+
+### Build Instructions
+
+Since Grail is a header-based library, you can include it directly in your project:
+
+```bash
+git clone https://github.com/ewilipsic/Grail-A_autograd_library_from_scatch.git
+cd Grail-A_autograd_library_from_scatch
+```
+
+Include the main header in your C++ files:
+```cpp
+#include "src/grail.h"
+```
 
 ## Comparison with Other Libraries
 
